@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>CondoSmart - Sistema de Gestión Integral</title>
+    <!-- Tailwind CSS with Forms and Container Queries -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles.css">
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-container-highest": "#e0e3e6",
+                        "primary-fixed-dim": "#b2c5ff",
+                        "tertiary-container": "#765245",
+                        "surface-variant": "#e0e3e6",
+                        "on-secondary-fixed": "#221b00",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed-variant": "#544600",
+                        tertiary: "#5c3b2f",
+                        "on-surface-variant": "#434654",
+                        "on-primary-fixed": "#001848",
+                        outline: "#737685",
+                        "surface-dim": "#d7dadd",
+                        "inverse-on-surface": "#eef1f4",
+                        surface: "#f7fafd",
+                        "inverse-surface": "#2d3133",
+                        "primary-container": "#0052cc",
+                        background: "#f7fafd",
+                        primary: "#003d9b",
+                        "inverse-primary": "#b2c5ff",
+                        "surface-container-low": "#f1f4f7",
+                        "on-tertiary-container": "#f8c8b7",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-high": "#e5e8eb",
+                        "surface-tint": "#0c56d0",
+                        error: "#ba1a1a",
+                        "secondary-fixed": "#ffe16d",
+                        "on-primary-container": "#c4d2ff",
+                        "tertiary-fixed": "#ffdbcf",
+                        "secondary-fixed-dim": "#e9c400",
+                        "on-tertiary-fixed": "#2e150b",
+                        "on-surface": "#181c1e",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed-dim": "#ebbcac",
+                        "on-tertiary-fixed-variant": "#603f33",
+                        "on-secondary-container": "#6e5c00",
+                        secondary: "#705d00",
+                        "on-background": "#181c1e",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-bright": "#f7fafd",
+                        "secondary-container": "#fcd400",
+                        "on-primary-fixed-variant": "#0040a2",
+                        "outline-variant": "#c3c6d6",
+                        "primary-fixed": "#dae2ff",
+                        "on-error": "#ffffff",
+                        "surface-container": "#ebeef1",
+                        "on-secondary": "#ffffff",
+                        "error-container": "#ffdad6"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                        lg: "0.75rem",
+                        xl: "1rem",
+                        full: "9999px"
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+<body class="bg-surface text-on-surface font-body min-h-screen flex flex-col overflow-x-hidden">
+
+    <!-- 1. LOGIN SCREEN -->
+    <div id="login-screen" class="flex-grow flex items-center justify-center p-6 glass-background">
+        <main class="w-full max-w-[480px] flex flex-col gap-8">
+            <div class="flex flex-col items-center gap-2 text-center">
+                <div class="w-16 h-16 bg-primary rounded-lg flex items-center justify-center shadow-lg mb-2">
+                    <span class="material-symbols-outlined text-on-primary text-[40px]">apartment</span>
+                </div>
+                <h1 class="text-3xl font-bold text-primary tracking-tight">CondoSmart</h1>
+                <p class="text-sm text-on-surface-variant max-w-[320px]">
+                    Gestión residencial inteligente, transparente y segura para tu comunidad.
+                </p>
+            </div>
+            
+            <div class="bg-surface-container-lowest p-8 rounded-xl shadow-md border border-outline-variant flex flex-col gap-6">
+                <!-- Profile Selector -->
+                <div class="flex flex-col gap-3">
+                    <label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Perfil de Acceso</label>
+                    <div class="grid grid-cols-2 gap-4">
+                        <button class="profile-tab active flex flex-col items-center gap-1 p-3 rounded-lg border border-outline-variant hover:bg-surface-container-low transition-all" id="btn-resident" onclick="setLoginRole('Residente')">
+                            <span class="material-symbols-outlined text-primary">person</span>
+                            <span class="text-sm font-medium">Residente</span>
+                        </button>
+                        <button class="profile-tab flex flex-col items-center gap-1 p-3 rounded-lg border border-outline-variant hover:bg-surface-container-low transition-all" id="btn-admin" onclick="setLoginRole('Administrador')">
+                            <span class="material-symbols-outlined text-on-surface-variant">admin_panel_settings</span>
+                            <span class="text-sm font-medium">Administración</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Login Form -->
+                <form id="loginForm" class="flex flex-col gap-4" onsubmit="handleLogin(event)">
+                    <div class="flex flex-col gap-1">
+                        <label class="text-sm font-medium text-on-surface-variant" for="email">Correo electrónico</label>
+                        <div class="relative">
+                            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">mail</span>
+                            <input class="w-full h-11 pl-10 pr-4 bg-surface-container-low border border-outline-variant rounded-lg focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm" id="email" type="email" placeholder="ejemplo@condosmart.com" required>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <label class="text-sm font-medium text-on-surface-variant" for="password">Contraseña</label>
+                        <div class="relative">
+                            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">lock</span>
+                            <input class="w-full h-11 pl-10 pr-10 bg-surface-container-low border border-outline-variant rounded-lg focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm" id="password" type="password" placeholder="••••••••" required>
+                            <button class="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-primary" type="button" onclick="togglePasswordVisibility()">
+                                <span class="material-symbols-outlined id="password-toggle">visibility</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between mt-2">
+                        <label class="flex items-center gap-2 cursor-pointer group">
+                            <input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary cursor-pointer" type="checkbox">
+                            <span class="text-sm text-on-surface-variant group-hover:text-on-surface transition-colors">Recordarme</span>
+                        </label>
+                        <a class="text-sm text-primary hover:underline transition-all" href="#" onclick="showScreen('recovery-screen')">¿Olvidaste tu contraseña?</a>
+                    </div>
+
+                    <button class="w-full h-12 bg-primary text-on-primary font-medium rounded-lg hover:shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-2 mt-2" type="submit">
+                        Iniciar Sesión
+                        <span class="material-symbols-outlined">arrow_forward</span>
+                    </button>
+                </form>
+
+                <div id="login-error" class="hidden p-3 bg-error-container text-on-error-container rounded-lg text-xs font-semibold flex items-center gap-2">
+                    <span class="material-symbols-outlined text-sm">error</span>
+                    <span id="login-error-text">Credenciales incorrectas.</span>
+                </div>
+            </div>
+            
+            <footer class="flex flex-col gap-2 items-center text-center">
+                <div class="flex gap-4">
+                    <a class="text-xs text-outline hover:text-primary" href="#">Términos</a>
+                    <a class="text-xs text-outline hover:text-primary" href="#">Privacidad</a>
+                    <a class="text-xs text-outline hover:text-primary" href="#">Soporte</a>
+                </div>
+                <p class="text-xs text-outline-variant">© 2026 CondoSmart Pro-Management. Fuerte Tiuna, Caracas.</p>
+            </footer>
+        </main>
+    </div>
+
+    <!-- 2. PASSWORD RECOVERY SCREEN -->
+    <div id="recovery-screen" class="hidden flex-grow flex items-center justify-center p-6 bg-surface">
+        <main class="w-full max-w-[480px] flex flex-col gap-6">
+            <div class="bg-surface-container-lowest p-8 rounded-xl shadow-md border border-outline-variant flex flex-col gap-6">
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="material-symbols-outlined text-primary text-3xl">domain</span>
+                    <span class="text-xl font-bold text-primary">CondoSmart</span>
+                </div>
+                <div class="space-y-2">
+                    <h2 class="text-2xl font-bold text-on-surface">Recuperar contraseña</h2>
+                    <p class="text-sm text-on-surface-variant">
+                        Ingresa el correo electrónico asociado a tu cuenta y te enviaremos las instrucciones para restablecerla.
+                    </p>
+                </div>
+                <form id="recoveryForm" class="space-y-4" onsubmit="handleRecovery(event)">
+                    <div class="space-y-1">
+                        <label class="block text-sm font-medium text-on-surface-variant" for="recovery-email">Correo Electrónico</label>
+                        <div class="relative">
+                            <input class="w-full h-11 pl-4 pr-10 rounded-lg border border-outline focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm bg-surface-container-lowest" id="recovery-email" type="email" placeholder="ejemplo@condosmart.com" required>
+                            <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline-variant">mail</span>
+                        </div>
+                    </div>
+                    <button class="w-full h-11 bg-primary text-on-primary font-medium rounded-lg shadow-sm hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-2" type="submit">
+                        Enviar enlace de recuperación
+                        <span class="material-symbols-outlined">send</span>
+                    </button>
+                </form>
+
+                <div id="successMessage" class="hidden p-4 bg-secondary-container/20 border border-secondary-container rounded-lg flex gap-3">
+                    <span class="material-symbols-outlined text-secondary">check_circle</span>
+                    <div>
+                        <p class="text-sm font-bold text-on-secondary-container">Correo enviado correctamente</p>
+                        <p class="text-xs text-on-secondary-container/80">Revisa tu bandeja de entrada o la carpeta de spam en los próximos minutos.</p>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-outline-variant flex flex-col items-center gap-4">
+                    <a class="flex items-center gap-1 text-sm font-medium text-primary hover:underline" href="#" onclick="showScreen('login-screen')">
+                        <span class="material-symbols-outlined text-sm">arrow_back</span>
+                        Volver al inicio de sesión
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 3. MAIN APP LAYOUT (PORTAL) -->
+    <div id="main-app" class="hidden flex-grow flex flex-col md:flex-row min-h-screen">
+        
+        <!-- SIDE NAVIGATION BAR (Desktop) -->
+        <aside id="sidebar" class="hidden md:flex flex-col h-screen w-64 fixed left-0 top-0 bg-surface-container-lowest border-r border-outline-variant p-4 gap-2 z-40">
+            <div class="mb-8 px-2 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary text-3xl">domain</span>
+                <div>
+                    <h1 class="text-lg font-bold text-primary">CondoSmart</h1>
+                    <span class="text-xs font-semibold text-outline tracking-widest uppercase" id="sidebar-role-label">Residente</span>
+                </div>
+            </div>
+            
+            <!-- Navigation Links (Dynamic) -->
+            <nav class="flex-grow flex flex-col gap-1" id="sidebar-nav">
+                <!-- Injected via JavaScript -->
+            </nav>
+            
+            <!-- Bottom action (Panic or Quick Report) -->
+            <div id="sidebar-bottom-actions" class="pt-4 border-t border-outline-variant flex flex-col gap-3">
+                <!-- Injected via JavaScript -->
+            </div>
+        </aside>
+
+        <!-- MAIN CANVAS -->
+        <div class="flex-grow md:ml-64 flex flex-col min-h-screen">
+            
+            <!-- TOP APP BAR -->
+            <header class="flex justify-between items-center w-full px-6 h-16 sticky top-0 z-30 bg-surface border-b border-outline-variant shadow-sm">
+                <div class="flex items-center gap-3">
+                    <span class="md:hidden material-symbols-outlined text-primary cursor-pointer" onclick="toggleMobileMenu()">menu</span>
+                    <h2 class="text-xl font-bold text-primary font-headline" id="top-title">Mis Finanzas</h2>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <!-- Telemetry Quick Indicator -->
+                    <div id="water-quick-indicator" class="flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-800 border border-blue-100 rounded-full text-xs font-medium cursor-pointer" onclick="navigateToSection('operaciones')">
+                        <span class="material-symbols-outlined text-sm animate-pulse">water_drop</span>
+                        <span id="quick-pressure">44.5 PSI</span>
+                    </div>
+
+                    <!-- Notification Dropdown Toggle -->
+                    <div class="relative">
+                        <button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-low p-2 rounded-full cursor-pointer relative" onclick="toggleNotifications()">
+                            notifications
+                            <span id="notification-badge" class="absolute top-1 right-1 w-2.5 h-2.5 bg-error rounded-full hidden"></span>
+                        </button>
+                        <!-- Dropdown list -->
+                        <div id="notification-dropdown" class="hidden absolute right-0 mt-2 w-80 bg-surface-container-lowest border border-outline-variant shadow-xl rounded-lg overflow-hidden z-50">
+                            <div class="p-3 border-b border-outline-variant font-bold text-sm bg-surface-container-low flex justify-between items-center">
+                                <span>Notificaciones del Sistema</span>
+                                <button class="text-xs text-primary hover:underline" onclick="clearNotifications()">Limpiar</button>
+                            </div>
+                            <div class="max-h-64 overflow-y-auto divide-y divide-outline-variant" id="notifications-list">
+                                <div class="p-3 text-xs text-on-surface-variant text-center">No hay alertas críticas pendientes.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Avatar -->
+                    <div class="flex items-center gap-3 pl-2 border-l border-outline-variant">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-sm font-bold leading-none text-on-surface" id="profile-name">Cargando...</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5" id="profile-email">...</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container border border-outline-variant overflow-hidden flex items-center justify-center font-bold text-lg" id="profile-avatar">
+                            U
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- MOBILE NAVIGATION BAR (Bottom) -->
+            <nav class="md:hidden fixed bottom-0 left-0 w-full z-40 flex justify-around items-center px-2 py-1 pb-safe bg-surface-container-lowest border-t border-outline-variant shadow-lg rounded-t-lg" id="mobile-nav">
+                <!-- Injected via JavaScript based on role -->
+            </nav>
+
+            <!-- VIEWPORT CONTENT -->
+            <main class="flex-grow p-6 pb-24 md:pb-8 max-w-7xl w-full mx-auto" id="viewport-content">
+                
+                <!-- ================= RESIDENT PORTAL VIEWS ================= -->
+                
+                <!-- VIEW: resident-finanzas -->
+                <section id="view-resident-finanzas" class="hidden space-y-6">
+                    <!-- Balance Principal -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2 bg-primary text-on-primary p-6 rounded-xl shadow-md flex flex-col justify-between relative overflow-hidden h-60 group">
+                            <div class="absolute top-0 right-0 p-6 opacity-10 scale-150 rotate-12 transition-transform group-hover:scale-110">
+                                <span class="material-symbols-outlined text-[120px]">account_balance_wallet</span>
+                            </div>
+                            <div>
+                                <p class="text-xs font-semibold uppercase tracking-wider opacity-85 mb-1">Estado de Cuenta Actual</p>
+                                <h3 class="font-bold text-4xl font-display" id="res-balance-amount">$ 1,240.00</h3>
+                                <p class="text-sm opacity-90 mt-2" id="res-unit-name">Torre B - Apartamento 402</p>
+                            </div>
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-4 mt-4 z-10">
+                                <button class="bg-secondary-container text-on-secondary-container px-6 py-3 rounded-full font-bold text-sm flex items-center justify-center gap-2 hover:opacity-95 transition-all active:scale-95 shadow-md" onclick="openReportPaymentModal()">
+                                    <span class="material-symbols-outlined">payments</span>
+                                    Reportar Pago
+                                </button>
+                                <p class="text-xs font-medium flex items-center gap-1.5 opacity-90">
+                                    <span class="material-symbols-outlined text-sm">event</span>
+                                    Vencimiento de cuota: 15 del mes
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <!-- Gastos Prorrateados del Mes -->
+                        <div class="bg-surface-container-lowest border border-outline-variant p-6 rounded-xl shadow-sm flex flex-col gap-4">
+                            <div class="flex items-center justify-between">
+                                <h4 class="font-bold text-lg text-primary">Próxima Alícuota Estimada</h4>
+                                <span class="material-symbols-outlined text-secondary">analytics</span>
+                            </div>
+                            <p class="text-xs text-on-surface-variant font-medium">Proyección del cobro al inicio del próximo mes basado en alícuota de copropiedad.</p>
+                            <div class="space-y-3 flex-grow justify-center flex flex-col">
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="text-on-surface-variant">Tu Alícuota asignada:</span>
+                                    <span class="font-bold text-primary" id="res-alicuota-val">35%</span>
+                                </div>
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="text-on-surface-variant">Último Gasto Común Total:</span>
+                                    <span class="font-semibold" id="res-gasto-total">$1,280.00</span>
+                                </div>
+                                <div class="pt-2 border-t border-outline-variant flex justify-between items-center text-base font-bold">
+                                    <span class="text-on-surface">Estimado mensual:</span>
+                                    <span class="text-secondary" id="res-cuota-estimada">$448.00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payments list -->
+                    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                        <!-- Historial de transacciones -->
+                        <div class="lg:col-span-3 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <h4 class="font-bold text-lg text-on-surface">Historial de Cargos y Pagos</h4>
+                            </div>
+                            <div class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left border-collapse">
+                                        <thead class="bg-surface-container-low border-b border-outline-variant">
+                                            <tr>
+                                                <th class="px-4 py-3 font-bold text-xs uppercase tracking-wider text-outline">Fecha</th>
+                                                <th class="px-4 py-3 font-bold text-xs uppercase tracking-wider text-outline">Concepto</th>
+                                                <th class="px-4 py-3 font-bold text-xs uppercase tracking-wider text-outline">Método / Referencia</th>
+                                                <th class="px-4 py-3 font-bold text-xs uppercase tracking-wider text-outline text-right">Monto</th>
+                                                <th class="px-4 py-3 font-bold text-xs uppercase tracking-wider text-outline text-center">Estado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-outline-variant text-sm" id="res-payments-table-body">
+                                            <!-- Injected dynamically -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Documentos Globales -->
+                        <div class="lg:col-span-1 space-y-4">
+                            <h4 class="font-bold text-lg text-on-surface">Documentos y Transparencia</h4>
+                            <div class="flex flex-col gap-3" id="res-docs-list">
+                                <!-- Injected dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: resident-seguridad -->
+                <section id="view-resident-seguridad" class="hidden space-y-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                        <!-- QR Generator -->
+                        <div class="lg:col-span-7 bg-primary text-on-primary p-6 rounded-xl shadow-md flex flex-col justify-between overflow-hidden relative group">
+                            <div class="z-10">
+                                <h2 class="text-2xl font-bold mb-1">Generar Invitación Temporal</h2>
+                                <p class="text-sm opacity-80 mb-6 font-normal">Crea un código QR de acceso seguro por 24 horas para tus visitantes.</p>
+                            </div>
+                            <form id="qrGenForm" class="z-10 flex flex-col gap-4 w-full" onsubmit="handleGenerateQR(event)">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div class="flex flex-col gap-1">
+                                        <label class="text-xs font-semibold opacity-90">Nombre del Visitante</label>
+                                        <input id="qr-visitor-name" class="bg-primary-container border-none text-on-primary-container placeholder-on-primary-container/50 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-inverse-primary" placeholder="Juan Pérez" required type="text">
+                                    </div>
+                                    <div class="flex flex-col gap-1">
+                                        <label class="text-xs font-semibold opacity-90">Documento / Cédula</label>
+                                        <input id="qr-visitor-doc" class="bg-primary-container border-none text-on-primary-container placeholder-on-primary-container/50 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-inverse-primary" placeholder="V-12345678" required type="text">
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-1">
+                                    <label class="text-xs font-semibold opacity-90">Motivo de la Visita</label>
+                                    <input id="qr-visitor-reason" class="bg-primary-container border-none text-on-primary-container placeholder-on-primary-container/50 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-inverse-primary" placeholder="Entrega de paquete / Reunión familiar" type="text">
+                                </div>
+                                <button class="bg-secondary-container text-on-secondary-container py-3 rounded-lg font-bold flex items-center justify-center gap-2 hover:brightness-105 active:scale-95 transition-all shadow-md mt-2 text-sm" type="submit">
+                                    <span class="material-symbols-outlined">qr_code_2</span>
+                                    Crear Acceso QR Autorizado
+                                </button>
+                            </form>
+                            <span class="material-symbols-outlined absolute -right-4 -bottom-4 text-[120px] opacity-10 rotate-12 transition-transform group-hover:rotate-0">qr_code_2</span>
+                        </div>
+
+                        <!-- Status & Panic -->
+                        <div class="lg:col-span-5 flex flex-col gap-6">
+                            <!-- Security Status Card -->
+                            <div class="bg-surface-container-high border border-outline-variant p-6 rounded-xl shadow-sm flex-grow flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center gap-2 text-primary mb-2">
+                                        <span class="material-symbols-outlined">verified_user</span>
+                                        <h2 class="font-bold text-lg">Estado de Seguridad del Edificio</h2>
+                                    </div>
+                                    <p class="text-sm text-on-surface-variant">Tu residencia está protegida de manera lógica. No se han reportado intrusiones en las últimas 24 horas y los sistemas de videovigilancia se encuentran activos.</p>
+                                </div>
+                                <div class="bg-surface-container-lowest p-3 rounded-lg border border-outline-variant mt-4">
+                                    <div class="flex items-center gap-3">
+                                        <span class="material-symbols-outlined text-tertiary">lightbulb</span>
+                                        <div>
+                                            <p class="text-xs font-bold text-on-surface">Recomendación Forense</p>
+                                            <p class="text-xs text-on-surface-variant">No divulgues tus códigos QR de visitas o credenciales de PIN con personal ajeno.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Mobile Panic Button Simulator -->
+                            <button class="w-full bg-error text-on-primary py-4 rounded-xl font-bold flex flex-col items-center justify-center gap-1 shadow-lg hover:bg-red-700 active:scale-95 transition-transform border-4 border-error-container" onclick="triggerPanicAlert()">
+                                <span class="material-symbols-outlined text-3xl animate-bounce">emergency</span>
+                                <span class="text-sm uppercase tracking-wider">Botón de Pánico Emergencia</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Gate Access Simulator & Access Bitacora -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Biometric gate simulator Peatonal -->
+                        <div class="lg:col-span-1 bg-surface-container-lowest border border-outline-variant p-6 rounded-xl shadow-sm flex flex-col gap-4">
+                            <h3 class="font-bold text-lg text-primary">Simular Sensor de Pórtico</h3>
+                            <p class="text-xs text-on-surface-variant">Simula un intento de acceso a tu nombre para validar cómo opera la base de datos.</p>
+                            <div class="space-y-3 flex-grow flex flex-col justify-center">
+                                <button class="w-full p-4 rounded-lg bg-surface-container-low border border-outline-variant hover:border-primary flex items-center justify-between group transition-all" onclick="simulateGateAccess('Biometrico')">
+                                    <div class="flex items-center gap-3">
+                                        <span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">fingerprint</span>
+                                        <span class="text-sm font-bold text-on-surface">Escaneo Huella Dactilar</span>
+                                    </div>
+                                    <span class="material-symbols-outlined text-xs text-outline group-hover:text-primary">arrow_forward_ios</span>
+                                </button>
+                                <button class="w-full p-4 rounded-lg bg-surface-container-low border border-outline-variant hover:border-primary flex items-center justify-between group transition-all" onclick="simulateGateAccess('Tag NFC')">
+                                    <div class="flex items-center gap-3">
+                                        <span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">contactless</span>
+                                        <span class="text-sm font-bold text-on-surface">Simular Tag NFC Vehicular</span>
+                                    </div>
+                                    <span class="material-symbols-outlined text-xs text-outline group-hover:text-primary">arrow_forward_ios</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Access log list -->
+                        <div class="lg:col-span-2 bg-surface-container-lowest border border-outline-variant p-6 rounded-xl shadow-sm">
+                            <h3 class="font-bold text-lg text-on-surface mb-4">Bitácora de Accesos Recientes</h3>
+                            <div class="overflow-x-auto max-h-60 overflow-y-auto">
+                                <table class="w-full border-collapse">
+                                    <thead>
+                                        <tr class="text-left border-b border-outline-variant text-xs uppercase tracking-wider text-on-surface-variant font-semibold">
+                                            <th class="py-2">Visitante / Tipo</th>
+                                            <th class="py-2">Fecha y Hora</th>
+                                            <th class="py-2">Ubicación</th>
+                                            <th class="py-2">Estado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-outline-variant text-sm" id="res-access-log">
+                                        <!-- Injected dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: resident-operaciones -->
+                <section id="view-resident-operaciones" class="hidden space-y-6">
+                    <!-- Dashboard Services -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Water pressure live gauge -->
+                        <div class="lg:col-span-2 bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm flex flex-col gap-4 relative overflow-hidden">
+                            <div class="flex justify-between items-start relative z-10">
+                                <div class="flex items-center gap-3">
+                                    <div class="p-3 bg-blue-50 text-blue-800 rounded-lg">
+                                        <span class="material-symbols-outlined text-2xl">water_drop</span>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg font-bold">Presión Red de Suministro</h3>
+                                        <p class="text-xs text-on-surface-variant">Monitoreo continuo de entrada al tanque de agua principal</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-4xl font-bold text-primary font-display" id="res-pressure-val">44.5 <small class="text-sm font-normal text-on-surface-variant">PSI</small></span>
+                                    <p class="text-[10px] font-bold text-secondary tracking-widest uppercase mt-1" id="res-pressure-status">PRESIÓN ÓPTIMA</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Real-time Pressure Graph -->
+                            <div class="mt-4 h-52 w-full bg-surface-container-low rounded-lg p-2">
+                                <canvas id="resPressureChart" class="w-full h-full"></canvas>
+                            </div>
+                        </div>
+                        
+                        <!-- Pump status -->
+                        <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm flex flex-col gap-4">
+                            <h3 class="text-lg font-bold">Bombas Hidráulicas</h3>
+                            <div class="flex-grow space-y-3" id="res-pumps-list">
+                                <!-- Injected dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Alerts and Building Status -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                        <!-- Alerts list -->
+                        <div class="lg:col-span-5 bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm flex flex-col">
+                            <h3 class="text-lg font-bold mb-4">Alertas Recientes de Servicios</h3>
+                            <div class="flex-grow flex flex-col gap-4 max-h-60 overflow-y-auto" id="res-alerts-list">
+                                <!-- Injected dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Building view -->
+                        <div class="lg:col-span-7 bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm flex flex-col justify-between relative overflow-hidden h-72 group">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
+                            <img alt="Building Infrastructure View" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80">
+                            <div class="absolute bottom-0 left-0 p-6 z-20 w-full flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                                <div class="text-white">
+                                    <h3 class="text-2xl font-bold">Plan de Infraestructura</h3>
+                                    <p class="text-xs opacity-90 max-w-md mt-1">Monitoreo térmico e hídrico de las calderas y tanques de reserva del edificio.</p>
+                                </div>
+                                <div class="flex gap-4">
+                                    <div class="glass-card p-3 rounded-lg flex flex-col items-center min-w-[80px] text-primary">
+                                        <span class="text-xl font-bold">22°C</span>
+                                        <span class="text-[9px] font-bold text-on-surface-variant uppercase tracking-wider mt-0.5">Caldera</span>
+                                    </div>
+                                    <div class="glass-card p-3 rounded-lg flex flex-col items-center min-w-[80px] text-primary">
+                                        <span class="text-xl font-bold">85%</span>
+                                        <span class="text-[9px] font-bold text-on-surface-variant uppercase tracking-wider mt-0.5">Reserva</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+
+                <!-- ================= ADMINISTRATOR PORTAL VIEWS ================= -->
+                
+                <!-- VIEW: admin-dashboard -->
+                <section id="view-admin-dashboard" class="hidden space-y-6">
+                    <div class="mb-4">
+                        <div class="flex items-center gap-2 text-on-surface-variant text-sm cursor-pointer hover:text-primary transition-colors">
+                            <span class="material-symbols-outlined">filter_list</span>
+                            <span class="font-semibold">Torre de Control: Fuerte Tiuna (Todas las Unidades)</span>
+                        </div>
+                    </div>
+
+                    <!-- Bento metrics cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Balance Summary -->
+                        <div class="bg-surface-container-lowest border border-outline-variant p-6 rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden group">
+                            <div class="absolute top-0 right-0 p-6 opacity-10 group-hover:scale-110 transition-transform">
+                                <span class="material-symbols-outlined text-[80px]" style="font-variation-settings: 'wght' 200;">account_balance_wallet</span>
+                            </div>
+                            <div class="z-10">
+                                <span class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Balance Total Recaudado</span>
+                                <h2 class="text-3xl font-bold text-primary mt-1 tracking-tight" id="adm-dash-balance">$0.00</h2>
+                            </div>
+                            <div class="mt-6 flex items-center gap-1 text-secondary text-xs font-semibold z-10">
+                                <span class="material-symbols-outlined text-sm">trending_up</span>
+                                <span>+12% vs mes anterior</span>
+                            </div>
+                        </div>
+
+                        <!-- Interest / Overdue Alert -->
+                        <div class="bg-error-container text-on-error-container p-6 rounded-xl shadow-sm flex flex-col justify-between">
+                            <div>
+                                <span class="text-xs font-semibold opacity-80 uppercase tracking-wider">Cuentas por Cobrar (Morosidad)</span>
+                                <h2 class="text-3xl font-bold mt-1 tracking-tight" id="adm-dash-mora">$0.00</h2>
+                            </div>
+                            <div class="mt-6 flex items-center gap-2 text-xs font-semibold">
+                                <span class="material-symbols-outlined text-sm">report</span>
+                                <p id="adm-dash-mora-sub">Cargos vencidos acumulados.</p>
+                            </div>
+                        </div>
+
+                        <!-- Egresos summary -->
+                        <div class="bg-primary-container text-on-primary-container p-6 rounded-xl shadow-sm flex flex-col justify-between">
+                            <div>
+                                <span class="text-xs font-semibold opacity-80 uppercase tracking-wider">Egresos Totales Registrados</span>
+                                <h2 class="text-3xl font-bold mt-1 tracking-tight" id="adm-dash-egresos">$0.00</h2>
+                            </div>
+                            <div class="mt-6 flex justify-between items-center text-xs font-semibold">
+                                <span>Mantenimiento operativo activo</span>
+                                <span class="material-symbols-outlined text-sm">engineering</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Operations summaries -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Water pressure telemetry card -->
+                        <div class="bg-surface-container-lowest border border-outline-variant p-6 rounded-xl shadow-sm flex flex-col justify-between">
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="p-3 bg-surface-container-high rounded-lg text-primary">
+                                    <span class="material-symbols-outlined">water_drop</span>
+                                </div>
+                                <span class="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full" id="adm-dash-water-status">Estable</span>
+                            </div>
+                            <div class="space-y-2">
+                                <p class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Telemetría de Agua</p>
+                                <h4 class="text-2xl font-bold text-on-surface" id="adm-dash-water-pressure">44.5 PSI</h4>
+                                <p class="text-xs text-on-surface-variant">Sensor en Tubería Principal. Actualizaciones en vivo vís WebSocket.</p>
+                            </div>
+                            <button class="mt-6 w-full py-3 bg-primary text-on-primary font-semibold text-sm rounded-lg hover:opacity-95 transition-opacity" onclick="navigateToSection('operaciones')">
+                                Configurar Telemetría
+                            </button>
+                        </div>
+
+                        <!-- Security live stream card -->
+                        <div class="bg-surface-container-lowest border border-outline-variant p-6 rounded-xl shadow-sm flex flex-col justify-between">
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="p-3 bg-tertiary-fixed rounded-lg text-tertiary">
+                                    <span class="material-symbols-outlined">videocam</span>
+                                </div>
+                                <div class="flex items-center gap-1.5 text-xs text-on-surface-variant">
+                                    <div class="w-2.5 h-2.5 rounded-full bg-secondary animate-pulse"></div>
+                                    <span>CCTV en Línea</span>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <p class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Último Acceso Registrado</p>
+                                <h4 class="text-sm font-bold text-on-surface" id="adm-dash-last-access">Carlos Mendoza (14:20 PM)</h4>
+                                <div class="flex -space-x-2 mt-2" id="adm-dash-access-avatars">
+                                    <!-- Dynamic avatars -->
+                                </div>
+                            </div>
+                            <button class="mt-6 w-full py-3 bg-secondary text-on-secondary font-semibold text-sm rounded-lg hover:opacity-95 transition-opacity" onclick="navigateToSection('seguridad')">
+                                Ver Panel de Cámaras
+                            </button>
+                        </div>
+
+                        <!-- Events Log -->
+                        <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm flex flex-col">
+                            <div class="flex justify-between items-start mb-3">
+                                <h4 class="text-sm font-bold text-on-surface uppercase tracking-wider text-outline-variant">Eventos Críticos Recientes</h4>
+                                <span class="material-symbols-outlined text-error text-xl animate-pulse">warning</span>
+                            </div>
+                            <div class="flex-grow space-y-3 divide-y divide-outline-variant" id="adm-dash-alerts-box">
+                                <!-- Dynamic alerts -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: admin-finanzas -->
+                <section id="view-admin-finanzas" class="hidden space-y-6">
+                    <!-- Billing options and upload -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                        <!-- Invoice list & table -->
+                        <div class="lg:col-span-8 bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm flex flex-col">
+                            <div class="p-5 border-b border-outline-variant flex flex-col sm:flex-row gap-4 justify-between items-center">
+                                <h3 class="text-lg font-bold text-on-surface">Historial de Pagos y Conciliaciones</h3>
+                                <div class="flex gap-2">
+                                    <button class="px-4 py-1.5 text-xs font-semibold border border-outline-variant rounded-full hover:bg-surface-container transition-colors" onclick="exportPaymentsPDF()">Exportar PDF</button>
+                                </div>
+                            </div>
+                            <div class="overflow-x-auto flex-grow max-h-[480px]">
+                                <table class="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-surface-container-low text-on-surface-variant border-b border-outline-variant text-xs uppercase tracking-wider font-semibold">
+                                            <th class="px-4 py-3">Unidad</th>
+                                            <th class="px-4 py-3">Concepto</th>
+                                            <th class="px-4 py-3">Referencia / Método</th>
+                                            <th class="px-4 py-3 text-right">Monto</th>
+                                            <th class="px-4 py-3 text-center">Estado</th>
+                                            <th class="px-4 py-3 text-center">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-outline-variant text-sm" id="adm-payments-table-body">
+                                        <!-- Dynamic rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Invoice & Billing Form -->
+                        <div class="lg:col-span-4 flex flex-col gap-6">
+                            <!-- Drag & Drop Uploader for expenses -->
+                            <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm">
+                                <h3 class="text-base font-bold text-on-surface mb-1">Registrar Egreso / Gasto Operativo</h3>
+                                <p class="text-xs text-on-surface-variant mb-4">Carga facturas de mantenimiento del edificio para el registro presupuestario.</p>
+                                <form id="admEgresoForm" class="flex flex-col gap-3" onsubmit="handleRegisterEgreso(event)">
+                                    <div>
+                                        <label class="block text-xs font-semibold text-on-surface-variant mb-1">Concepto del Egreso</label>
+                                        <input id="egr-concepto" class="w-full bg-surface-container-low border border-outline-variant rounded-lg p-2.5 text-sm" placeholder="Mantenimiento Boiler de Caldera" required type="text">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-on-surface-variant mb-1">Monto en Dólares ($)</label>
+                                        <input id="egr-monto" class="w-full bg-surface-container-low border border-outline-variant rounded-lg p-2.5 text-sm" placeholder="850.00" required step="0.01" type="number">
+                                    </div>
+                                    <button class="w-full bg-primary text-on-primary py-2.5 rounded-lg font-bold hover:opacity-95 transition-opacity text-sm mt-2 flex items-center justify-center gap-2" type="submit">
+                                        <span class="material-symbols-outlined text-sm">receipt_long</span>
+                                        Registrar Gasto
+                                    </button>
+                                </form>
+                            </div>
+
+                            <!-- Automatic billing simulator -->
+                            <div class="bg-surface-container p-6 rounded-xl border border-outline-variant flex flex-col gap-3">
+                                <h4 class="font-bold text-sm uppercase tracking-wider text-primary">Generar Facturación Mensual</h4>
+                                <p class="text-xs text-on-surface-variant">Simula la ejecución del Cron Job que prorratea los gastos del condominio entre todas las unidades según su alícuota y recarga un 2% de interés a unidades morosas.</p>
+                                <div class="flex gap-2 mt-1">
+                                    <input id="cron-gasto-total" class="flex-grow bg-surface-container-lowest border border-outline-variant rounded-lg p-2 text-sm" placeholder="Gasto Común Total ($)" type="number">
+                                    <button class="bg-secondary-container text-on-secondary-container px-4 rounded-lg font-bold text-xs hover:brightness-105 active:scale-95 transition-all" onclick="triggerBillingCron()">Ejecutar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: admin-seguridad -->
+                <section id="view-admin-seguridad" class="hidden space-y-6">
+                    <!-- Cameras and logs -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                        <!-- Camera Feed Grid -->
+                        <div class="lg:col-span-8 bg-surface-container-lowest border border-outline-variant p-6 rounded-xl shadow-sm flex flex-col gap-4">
+                            <h3 class="text-lg font-bold text-on-surface mb-2">Simulador de Circuito Cerrado (CCTV)</h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <!-- Camera 1 -->
+                                <div class="bg-black aspect-video rounded-lg relative overflow-hidden flex items-center justify-center group border border-outline">
+                                    <div class="absolute top-2 left-2 bg-black/60 text-[10px] text-white px-2 py-0.5 rounded font-mono z-10">CAM 01 - ACCESO PEATONAL</div>
+                                    <div class="absolute top-2 right-2 flex items-center gap-1 bg-red-600/80 text-[10px] text-white px-2 py-0.5 rounded font-bold uppercase tracking-wider z-10">
+                                        <div class="w-1.5 h-1.5 bg-white rounded-full animate-ping"></div>
+                                        <span>LIVE</span>
+                                    </div>
+                                    <!-- Dummy camera visual -->
+                                    <canvas id="cam1-canvas" class="w-full h-full object-cover opacity-80"></canvas>
+                                </div>
+                                <!-- Camera 2 -->
+                                <div class="bg-black aspect-video rounded-lg relative overflow-hidden flex items-center justify-center group border border-outline">
+                                    <div class="absolute top-2 left-2 bg-black/60 text-[10px] text-white px-2 py-0.5 rounded font-mono z-10">CAM 02 - ENTRADA VEHICULAR</div>
+                                    <div class="absolute top-2 right-2 flex items-center gap-1 bg-red-600/80 text-[10px] text-white px-2 py-0.5 rounded font-bold uppercase tracking-wider z-10">
+                                        <div class="w-1.5 h-1.5 bg-white rounded-full animate-ping"></div>
+                                        <span>LIVE</span>
+                                    </div>
+                                    <canvas id="cam2-canvas" class="w-full h-full object-cover opacity-80"></canvas>
+                                </div>
+                                <!-- Camera 3 -->
+                                <div class="bg-black aspect-video rounded-lg relative overflow-hidden flex items-center justify-center group border border-outline">
+                                    <div class="absolute top-2 left-2 bg-black/60 text-[10px] text-white px-2 py-0.5 rounded font-mono z-10">CAM 03 - ESTACIONAMIENTO</div>
+                                    <div class="absolute top-2 right-2 flex items-center gap-1 bg-red-600/80 text-[10px] text-white px-2 py-0.5 rounded font-bold uppercase tracking-wider z-10">
+                                        <div class="w-1.5 h-1.5 bg-white rounded-full animate-ping"></div>
+                                        <span>LIVE</span>
+                                    </div>
+                                    <canvas id="cam3-canvas" class="w-full h-full object-cover opacity-80"></canvas>
+                                </div>
+                                <!-- Camera 4 -->
+                                <div class="bg-black aspect-video rounded-lg relative overflow-hidden flex items-center justify-center group border border-outline">
+                                    <div class="absolute top-2 left-2 bg-black/60 text-[10px] text-white px-2 py-0.5 rounded font-mono z-10">CAM 04 - PASILLO TORRE B</div>
+                                    <div class="absolute top-2 right-2 flex items-center gap-1 bg-red-600/80 text-[10px] text-white px-2 py-0.5 rounded font-bold uppercase tracking-wider z-10">
+                                        <div class="w-1.5 h-1.5 bg-white rounded-full animate-ping"></div>
+                                        <span>LIVE</span>
+                                    </div>
+                                    <canvas id="cam4-canvas" class="w-full h-full object-cover opacity-80"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Live access logs -->
+                        <div class="lg:col-span-4 bg-surface-container-lowest border border-outline-variant p-6 rounded-xl shadow-sm flex flex-col">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-bold text-lg text-on-surface">Bitácora en Tiempo Real</h3>
+                                <button class="text-xs text-primary font-bold hover:underline" onclick="simulateFailedAccess()">Simular Intruso</button>
+                            </div>
+                            <div class="flex-grow overflow-y-auto max-h-[380px] divide-y divide-outline-variant" id="adm-access-bitacora">
+                                <!-- Live items -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: admin-operaciones -->
+                <section id="view-admin-operaciones" class="hidden space-y-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                        <!-- Pressure simulator and graph -->
+                        <div class="lg:col-span-8 bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm flex flex-col gap-4">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-lg font-bold">Monitoreo de Telemetría (Agua)</h3>
+                                <div class="flex gap-2">
+                                    <button id="btn-sim-nominal" class="px-4 py-1.5 rounded-full text-xs font-bold bg-secondary-container text-on-secondary-container transition-all" onclick="setSimState('Nominal', false)">Nominal</button>
+                                    <button id="btn-sim-leak" class="px-4 py-1.5 rounded-full text-xs font-bold bg-surface-container-high text-on-surface-variant hover:bg-tertiary-container hover:text-on-tertiary-container transition-all" onclick="setSimState('Nominal', true)">Simular Fuga</button>
+                                    <button id="btn-sim-fail" class="px-4 py-1.5 rounded-full text-xs font-bold bg-surface-container-high text-on-surface-variant hover:bg-error-container hover:text-on-error-container transition-all" onclick="setSimState('Fallo', false)">Fallo Bomba</button>
+                                </div>
+                            </div>
+                            <!-- Live line chart -->
+                            <div class="h-64 bg-surface-container-low rounded-lg p-3">
+                                <canvas id="admPressureChart" class="w-full h-full"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Threshold controls and status -->
+                        <div class="lg:col-span-4 flex flex-col gap-6">
+                            <!-- Configurations -->
+                            <div class="bg-surface-container-lowest border border-outline-variant p-6 rounded-xl shadow-sm flex flex-col justify-between">
+                                <h3 class="font-bold text-base text-primary mb-3">Límites de Alerta</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <div class="flex justify-between text-sm mb-1">
+                                            <span class="text-on-surface-variant font-medium">Presión Mínima</span>
+                                            <span class="font-bold text-primary" id="val-presion-min">30 PSI</span>
+                                        </div>
+                                        <input type="range" id="range-presion-min" min="15" max="40" value="30" class="w-full accent-primary" oninput="updateThresholdLabels()">
+                                    </div>
+                                    <div>
+                                        <div class="flex justify-between text-sm mb-1">
+                                            <span class="text-on-surface-variant font-medium">Presión Máxima</span>
+                                            <span class="font-bold text-primary" id="val-presion-max">75 PSI</span>
+                                        </div>
+                                        <input type="range" id="range-presion-max" min="60" max="90" value="75" class="w-full accent-primary" oninput="updateThresholdLabels()">
+                                    </div>
+                                    <button class="w-full bg-primary text-on-primary py-2.5 rounded-lg font-bold text-sm hover:opacity-95 transition-all mt-2" onclick="saveTelemetryThresholds()">
+                                        Actualizar Umbrales
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Notification dispatch log -->
+                            <div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant flex-grow flex flex-col">
+                                <h4 class="font-bold text-sm uppercase tracking-wider text-tertiary mb-3">Despachador de Alertas</h4>
+                                <div class="flex-grow space-y-2 max-h-48 overflow-y-auto text-xs font-mono" id="alert-dispatch-log">
+                                    <div class="text-outline">Escucha activa de alertas MQTT...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: admin-comunidad -->
+                <section id="view-admin-comunidad" class="hidden space-y-6">
+                    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm">
+                        <div class="p-5 border-b border-outline-variant flex justify-between items-center bg-surface-container-low/50">
+                            <h3 class="text-lg font-bold text-on-surface">Padrón Electoral y Directorio Residencial</h3>
+                            <button class="bg-primary text-on-primary px-4 py-2 rounded-lg font-bold text-sm flex items-center justify-center gap-1.5 hover:opacity-95 transition-all active:scale-95 shadow-sm" onclick="openAddResidentModal()">
+                                <span class="material-symbols-outlined text-sm">person_add</span>
+                                Registrar Residente
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-surface-container-low text-on-surface-variant border-b border-outline-variant text-xs uppercase tracking-wider font-semibold">
+                                        <th class="px-6 py-3">Nombre</th>
+                                        <th class="px-6 py-3">Correo Electrónico</th>
+                                        <th class="px-6 py-3">Rol del Sistema</th>
+                                        <th class="px-6 py-3">Teléfono</th>
+                                        <th class="px-6 py-3 text-center">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-outline-variant text-sm" id="adm-residents-table-body">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: admin-database -->
+                <section id="view-admin-database" class="hidden space-y-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                        <!-- Table selector -->
+                        <div class="lg:col-span-3 bg-surface-container-lowest border border-outline-variant p-4 rounded-xl shadow-sm flex flex-col gap-2 h-96 overflow-y-auto">
+                            <h4 class="font-bold text-xs uppercase tracking-wider text-outline mb-2">Tablas de la Base de Datos</h4>
+                            <button class="db-table-tab active p-2.5 rounded-lg text-sm text-left hover:bg-surface-container-low transition-all" onclick="loadDBTable('usuarios')">usuarios</button>
+                            <button class="db-table-tab p-2.5 rounded-lg text-sm text-left hover:bg-surface-container-low transition-all" onclick="loadDBTable('unidades')">unidades</button>
+                            <button class="db-table-tab p-2.5 rounded-lg text-sm text-left hover:bg-surface-container-low transition-all" onclick="loadDBTable('pagos')">pagos</button>
+                            <button class="db-table-tab p-2.5 rounded-lg text-sm text-left hover:bg-surface-container-low transition-all" onclick="loadDBTable('egresos')">egresos</button>
+                            <button class="db-table-tab p-2.5 rounded-lg text-sm text-left hover:bg-surface-container-low transition-all" onclick="loadDBTable('accesos')">accesos</button>
+                            <button class="db-table-tab p-2.5 rounded-lg text-sm text-left hover:bg-surface-container-low transition-all" onclick="loadDBTable('telemetria')">telemetria</button>
+                            <button class="db-table-tab p-2.5 rounded-lg text-sm text-left hover:bg-surface-container-low transition-all" onclick="loadDBTable('visitantes')">visitantes</button>
+                            <button class="db-table-tab p-2.5 rounded-lg text-sm text-left hover:bg-surface-container-low transition-all" onclick="loadDBTable('configuracion_sistema')">configuracion_sistema</button>
+                            <button class="db-table-tab p-2.5 rounded-lg text-sm text-left hover:bg-surface-container-low transition-all" onclick="loadDBTable('bitacora')">bitacora</button>
+                        </div>
+
+                        <!-- Direct table data view -->
+                        <div class="lg:col-span-9 bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm flex flex-col h-[520px]">
+                            <div class="p-4 bg-surface-container-low border-b border-outline-variant flex justify-between items-center">
+                                <h3 class="text-sm font-mono font-bold text-primary" id="db-view-title">SELECT * FROM usuarios;</h3>
+                                <span class="text-xs bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded font-bold uppercase">Lectura directa</span>
+                            </div>
+                            <div class="overflow-auto flex-grow">
+                                <table class="w-full text-left border-collapse text-xs font-mono">
+                                    <thead class="bg-surface-container-low border-b border-outline-variant" id="db-view-thead">
+                                        <!-- Dynamic headers -->
+                                    </thead>
+                                    <tbody class="divide-y divide-outline-variant" id="db-view-tbody">
+                                        <!-- Dynamic rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- ================= MODALS ================= -->
+
+    <!-- MODAL: Report Payment (Resident) -->
+    <div id="reportPaymentModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50">
+        <div class="bg-surface-container-lowest rounded-xl max-w-lg w-full border border-outline-variant shadow-2xl overflow-hidden flex flex-col">
+            <header class="p-5 border-b border-outline-variant bg-surface-container-low flex justify-between items-center">
+                <h3 class="text-lg font-bold text-primary">Reportar Transferencia / Pago</h3>
+                <button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container p-1 rounded-full cursor-pointer" onclick="closeReportPaymentModal()">close</button>
+            </header>
+            <form id="reportPaymentForm" class="p-6 space-y-4" onsubmit="handleReportPayment(event)">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-on-surface-variant mb-1">Monto de la Transacción ($)</label>
+                        <input id="pago-monto" class="w-full bg-surface-container-low border border-outline-variant rounded-lg p-2.5 text-sm" placeholder="240.00" required step="0.01" type="number">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-on-surface-variant mb-1">Número de Referencia</label>
+                        <input id="pago-referencia" class="w-full bg-surface-container-low border border-outline-variant rounded-lg p-2.5 text-sm" placeholder="872910" required type="text">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-on-surface-variant mb-1">Método de Pago</label>
+                        <select id="pago-metodo" class="w-full bg-surface-container-low border border-outline-variant rounded-lg p-2.5 text-sm">
+                            <option>Transferencia Bancaria</option>
+                            <option>Pago Movil</option>
+                            <option>Divisas Efectivo</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-on-surface-variant mb-1">Concepto de Cuota</label>
+                        <select id="pago-concepto" class="w-full bg-surface-container-low border border-outline-variant rounded-lg p-2.5 text-sm">
+                            <option>Cuota de Mantenimiento</option>
+                            <option>Fondo de Reserva</option>
+                            <option>Cuota Extraordinaria</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-on-surface-variant mb-1">Comprobante Digital (Imagen)</label>
+                    <div class="border-2 border-dashed border-outline-variant rounded-lg p-4 flex flex-col items-center justify-center gap-1 bg-surface-container-low hover:border-primary transition-colors cursor-pointer" onclick="document.getElementById('pago-comprobante').click()">
+                        <span class="material-symbols-outlined text-3xl text-outline-variant">cloud_upload</span>
+                        <p class="text-xs font-bold text-on-surface">Selecciona o arrastra tu comprobante</p>
+                        <p class="text-[10px] text-outline" id="comprobante-filename-label">Formatos permitidos: JPG, PNG (Max 5MB)</p>
+                        <input type="file" id="pago-comprobante" class="hidden" accept="image/*" onchange="updateComprobanteFilenameLabel()">
+                    </div>
+                </div>
+                <button class="w-full bg-primary text-on-primary py-3 rounded-lg font-bold text-sm hover:opacity-95 transition-opacity" type="submit">
+                    Enviar Reporte a Conciliación
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: View QR Code / Invite (Resident/Admin) -->
+    <div id="viewQRModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50">
+        <div class="bg-surface-container-lowest rounded-xl max-w-sm w-full border border-outline-variant shadow-2xl p-6 flex flex-col items-center text-center gap-4">
+            <header class="w-full flex justify-between items-center border-b border-outline-variant pb-2">
+                <h3 class="text-sm font-bold text-primary uppercase tracking-wider">Invitación QR Generada</h3>
+                <button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container p-1 rounded-full cursor-pointer" onclick="closeQRModal()">close</button>
+            </header>
+            
+            <div class="bg-white p-4 rounded-lg border border-outline-variant flex items-center justify-center shadow-inner" id="qrcode-container">
+                <!-- QR Code image injected via js using dynamic QR generator API -->
+            </div>
+            
+            <div class="space-y-1">
+                <p class="text-sm font-bold text-on-surface" id="qr-modal-visitor-name">Carlos Mendoza</p>
+                <p class="text-xs text-on-surface-variant" id="qr-modal-visitor-details">QR Temporal Autorizado</p>
+                <p class="text-[10px] text-error font-semibold mt-1" id="qr-modal-expiration">Vence: 2026-06-19 14:20</p>
+            </div>
+            
+            <p class="text-xs text-outline-variant px-4">Comparte este código con tu invitado. Deberá mostrarlo en el lector del pórtico para ingresar.</p>
+            <button class="w-full bg-secondary-container text-on-secondary-container py-2.5 rounded-lg font-bold text-sm flex items-center justify-center gap-1.5 hover:brightness-105" onclick="shareQRLink()">
+                <span class="material-symbols-outlined text-sm">share</span>
+                Compartir Enlace
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL: Add Resident (Admin) -->
+    <div id="addResidentModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50">
+        <div class="bg-surface-container-lowest rounded-xl max-w-md w-full border border-outline-variant shadow-2xl overflow-hidden flex flex-col">
+            <header class="p-5 border-b border-outline-variant bg-surface-container-low flex justify-between items-center">
+                <h3 class="text-lg font-bold text-primary">Registrar Usuario de Comunidad</h3>
+                <button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container p-1 rounded-full cursor-pointer" onclick="closeAddResidentModal()">close</button>
+            </header>
+            <form id="addResidentForm" class="p-6 space-y-4" onsubmit="handleAddResident(event)">
+                <div class="space-y-1">
+                    <label class="block text-xs font-semibold text-on-surface-variant">Nombre Completo</label>
+                    <input id="res-new-name" class="w-full bg-surface-container-low border border-outline-variant rounded-lg p-2.5 text-sm" placeholder="Enzo Ortiz" required type="text">
+                </div>
+                <div class="space-y-1">
+                    <label class="block text-xs font-semibold text-on-surface-variant">Correo Electrónico</label>
+                    <input id="res-new-email" class="w-full bg-surface-container-low border border-outline-variant rounded-lg p-2.5 text-sm" placeholder="enzo@condosmart.com" required type="email">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="block text-xs font-semibold text-on-surface-variant">Rol del Sistema</label>
+                        <select id="res-new-rol" class="w-full bg-surface-container-low border border-outline-variant rounded-lg p-2.5 text-sm" onchange="toggleResidentFormDetails()">
+                            <option>Residente</option>
+                            <option>Vigilante</option>
+                            <option>Tecnico</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="block text-xs font-semibold text-on-surface-variant">Teléfono</label>
+                        <input id="res-new-phone" class="w-full bg-surface-container-low border border-outline-variant rounded-lg p-2.5 text-sm" placeholder="+584120000000" type="text">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4" id="resident-only-fields">
+                    <div class="space-y-1">
+                        <label class="block text-xs font-semibold text-on-surface-variant">Número de Unidad</label>
+                        <input id="res-new-unit" class="w-full bg-surface-container-low border border-outline-variant rounded-lg p-2.5 text-sm" placeholder="Torre B - 402">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="block text-xs font-semibold text-on-surface-variant">Alícuota Copropiedad</label>
+                        <input id="res-new-alicuota" class="w-full bg-surface-container-low border border-outline-variant rounded-lg p-2.5 text-sm" placeholder="0.25" step="0.01" min="0.01" max="1.0" type="number" value="0.25">
+                    </div>
+                </div>
+                <div class="space-y-1">
+                    <label class="block text-xs font-semibold text-on-surface-variant">Contraseña de Inicialización</label>
+                    <input id="res-new-password" class="w-full bg-surface-container-low border border-outline-variant rounded-lg p-2.5 text-sm" placeholder="residente123" required type="password" value="residente123">
+                </div>
+                <button class="w-full bg-primary text-on-primary py-3 rounded-lg font-bold text-sm hover:opacity-95 transition-opacity" type="submit">
+                    Crear y Registrar
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: View Digital Receipt (Admin/Resident) -->
+    <div id="viewReceiptModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50">
+        <div class="bg-surface-container-lowest rounded-xl max-w-md w-full border border-outline-variant shadow-2xl overflow-hidden flex flex-col">
+            <header class="p-4 border-b border-outline-variant bg-surface-container-low flex justify-between items-center">
+                <h3 class="text-sm font-bold text-primary uppercase tracking-wider">Comprobante de Pago</h3>
+                <button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container p-1 rounded-full cursor-pointer" onclick="closeReceiptModal()">close</button>
+            </header>
+            <div class="p-6 flex flex-col gap-4 items-center">
+                <div class="w-full aspect-[4/5] bg-surface-container-high rounded-lg overflow-hidden border border-outline flex items-center justify-center relative shadow-inner">
+                    <img id="receipt-modal-image" class="w-full h-full object-contain" src="">
+                    <span id="receipt-modal-fallback" class="material-symbols-outlined text-6xl text-outline-variant hidden">receipt_long</span>
+                </div>
+                <div class="w-full text-sm divide-y divide-outline-variant">
+                    <div class="flex justify-between py-2"><span class="text-on-surface-variant">Monto reportado:</span><span class="font-bold text-primary" id="receipt-modal-monto">...</span></div>
+                    <div class="flex justify-between py-2"><span class="text-on-surface-variant">Referencia:</span><span class="font-semibold" id="receipt-modal-ref">...</span></div>
+                    <div class="flex justify-between py-2"><span class="text-on-surface-variant">Método:</span><span id="receipt-modal-metodo">...</span></div>
+                    <div class="flex justify-between py-2"><span class="text-on-surface-variant">Concepto:</span><span id="receipt-modal-concepto">...</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS Scripts -->
+    <script src="app.js"></script>
+</body>
+</html>
