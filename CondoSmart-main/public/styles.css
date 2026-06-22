@@ -1,0 +1,120 @@
+/* CondoSmart Stylesheet */
+
+body {
+    font-family: 'Outfit', sans-serif;
+    background-color: #f7fafd;
+    color: #181c1e;
+    scroll-behavior: smooth;
+}
+
+/* Glassmorphism Cards */
+.glass-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(224, 227, 230, 0.5);
+}
+
+.glass-background {
+    background: radial-gradient(circle at 10% 20%, rgba(218, 226, 255, 0.4) 0%, rgba(247, 250, 253, 1) 90%);
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: #c3c6d6;
+    border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #737685;
+}
+
+/* Profile Selector Tabs Active State */
+.profile-tab.active {
+    box-shadow: 0 0 0 2px #003d9b;
+    background-color: #dae2ff;
+    border-color: #003d9b;
+}
+
+.profile-tab.active span {
+    color: #003d9b;
+}
+
+.profile-tab.active span:last-child {
+    font-weight: 700;
+}
+
+/* Navigation active states */
+.nav-link-active {
+    background-color: #fcd400;
+    color: #221b00 !important;
+    font-weight: 700;
+    box-shadow: 0 2px 4px rgba(110, 92, 0, 0.15);
+}
+
+.nav-link-active span {
+    font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Bottom Safe Area for Mobile Devices */
+.pb-safe {
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 0.5rem);
+}
+
+/* Status Pill Styling */
+.status-pill {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.status-pagado {
+    background-color: rgba(112, 93, 0, 0.15);
+    color: #544600;
+}
+
+.status-pendiente {
+    background-color: rgba(186, 26, 26, 0.15);
+    color: #ba1a1a;
+}
+
+.status-revision {
+    background-color: rgba(92, 59, 47, 0.15);
+    color: #765245;
+}
+
+/* Database Table Direct Connection Tab Active State */
+.db-table-tab.active {
+    background-color: #003d9b;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Camera scanline effect simulation */
+.scanline {
+    background: linear-gradient(
+        to bottom,
+        rgba(255,255,255,0),
+        rgba(255,255,255,0) 50%,
+        rgba(0, 0, 0, 0.1) 50%,
+        rgba(0, 0, 0, 0.1)
+    );
+    background-size: 100% 4px;
+}
